@@ -4,6 +4,8 @@ Calypso is a terminal workflow for turning podcast recordings into vertical shor
 
 For a guided run, open Codex in this repository and say `Use $calypso-podcast-clips to walk me through making clips from /path/to/episode.mp4.`
 
+The skill maps the whole episode before recommending clips. It can reuse local Yogurt models for [transcription and context](.agents/skills/calypso-podcast-clips/references/yogurt-context.md). Longer stories get a separate `story-arcs.json` edit plan with source ranges to keep and cut. The `render` command takes one continuous interval per clip ID, so multi-part stories need a rough-cut step.
+
 ## Setup
 
 Install Python 3.9+, FFmpeg 8 with `libx264` and AAC, and [whisper.cpp](https://github.com/ggml-org/whisper.cpp). For Excalidraw diagrams, also install Node.js 22+, a browser supported by the [Excalidraw CLI](https://github.com/excalidraw/cli), and `@excalidraw/cli`. All commands assume you are at the repository root.

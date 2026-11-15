@@ -1,6 +1,6 @@
 ---
 name: calypso-podcast-clips
-description: Turn local podcast recordings into reviewable short clips through the terminal. Use for a step-by-step walkthrough, timestamped local transcription, episode analysis, candidate selection, active-speaker framing, Excalidraw explainers, or vertical video export in Calypso.
+description: Turn local podcast recordings into reviewable short clips through the terminal. Use for a step-by-step walkthrough, timestamped local transcription, episode context, story arcs, candidate selection, active-speaker framing, Excalidraw explainers, or vertical video export in Calypso.
 ---
 
 # Calypso podcast clips
@@ -11,15 +11,21 @@ For a guided run, give one actionable step at a time and explain how to verify t
 
 ## Find the recording and transcribe
 
-Use the source path the user supplies, or ask for it when the recording is unclear. Use `doctor` to check dependencies. Probe the source before choosing the dialogue track. Run `transcribe` in a new work directory using the configured model or `--model models/ggml-base.bin` when that file exists. Reuse a transcript from a confirmed earlier run of the same source when available. Confirm the timestamped JSON contains usable dialogue.
+Use the supplied source path, or ask for it if the recording is unclear. Probe the available audio streams and choose the dialogue track. Prefer the local Whisper large-v3-turbo and Silero workflow in [Yogurt-inspired context](references/yogurt-context.md) when the models are available. The standard `transcribe` command works with a configured Whisper model or `--model models/ggml-base.bin` when that file exists. Reuse a verified transcript for the same source when its quality is sufficient. Confirm the JSON contains usable dialogue and source-relative timestamps.
 
-If Whisper's Metal backend or Excalidraw's Chrome launch fails in the Codex sandbox, provide the corresponding command for the user's regular terminal. Use a fresh transcription work directory if the failed run already created one.
+If Whisper's Metal backend or Excalidraw's Chrome launch fails in the Codex sandbox, retry with appropriate access or provide the command for the user's regular terminal. Use a fresh work directory if the failed transcription already created one.
 
-## Prepare a shortlist
+## Build episode context
 
-Read the timestamped transcript in order. For long episodes, summarize successive sections and consolidate topics and dependencies before suggesting clips. Check nearby lines and sample frames where a speaker refers to something onscreen.
+Use the local notes pass in [Yogurt-inspired context](references/yogurt-context.md). Map the whole episode before proposing edits. Link topics and callbacks to timestamped transcript rows. Preserve what was proposed, disputed, or hypothetical. Check the notes against the transcript and keep speaker attribution uncertain when the audio is mixed. Check nearby lines and sample frames where meaning depends on something onscreen.
 
-Choose excerpts with a self-contained question or claim, a useful explanation, and a payoff. Preserve important qualifiers. Align boundaries to complete phrases and check them against the source. Write a `clips.json` with stable IDs, source-relative timestamps in seconds, titles, and reasons. Use `list` to present the options and describe which framing fits each clip. Ask for clip IDs and any missing layout choices. Render the IDs the user selects, including any selection they already supplied.
+## Propose complete stories
+
+Start with the message a viewer should take away. Find the hook or question, the minimum context to follow it, and the explanation and payoff. Flag promising arcs even when they span several minutes or when the answer comes much later. Keep source order unless the user requests a different structure and the resulting edit preserves meaning.
+
+For a multi-part story, save a separate `story-arcs.json` with a stable ID, title, takeaway, full source span, ordered nonoverlapping keep ranges, cut ranges with reasons, estimated edited duration, and any joins that need a short visual bridge. Use source-relative seconds and record transcript row IDs for each keep range. Cut repetition, tangents, and dead air while retaining caveats and necessary setup. Compare the lines on both sides of each proposed join and mark unclear joins for an audio preview. Present the source span and estimated edited duration so the user can judge the difference.
+
+Include shorter contiguous clips when they deliver a complete point. Save those in `clips.json` and use `list` to present them. The current `render` command accepts one continuous interval per ID. Use a separate rough-cut step for selected multi-part edits and preview joins before treating the edit as final. Ask for clip IDs and any missing layout choices. Render the selections the user approves.
 
 ## Prepare framing and diagrams
 
