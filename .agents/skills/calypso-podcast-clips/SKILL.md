@@ -27,6 +27,14 @@ For a multi-part story, save a separate `story-arcs.json` with a stable ID, titl
 
 Include shorter contiguous clips when they deliver a complete point. Save those in `clips.json` and use `list` to present them. The current `render` command accepts one continuous interval per ID. Use a separate rough-cut step for selected multi-part edits and preview joins before treating the edit as final. Ask for clip IDs and any missing layout choices. Render the selections the user approves.
 
+## Request host-recorded narration
+
+Use the original dialogue and host-recorded pickups for spoken audio. Keep synthesized or cloned voices out of rough cuts and final exports unless the user explicitly changes this preference.
+
+When an opening, transition, or factual correction needs new speech, give the host exact copy for each pickup, where it goes, an estimated duration, and a distinct filename or take label. Accept short separate recordings or one recording with clear pauses between takes. Prepare the edit and visuals while the host records. Use silent text cards for any interim preview that needs missing pickups.
+
+When the recordings arrive, match each take to its cue, remove excess silence, level it against the podcast dialogue, and adjust card timing to fit the recorded delivery. Check the joins and confirm that the export contains only original dialogue and the host's recorded pickups.
+
 ## Prepare framing and diagrams
 
 - **Full shot** uses `original`.
