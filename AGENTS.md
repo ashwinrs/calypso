@@ -6,6 +6,8 @@ Keep transcription local and preserve the source recording. Propose clip IDs and
 
 Build episode context before proposing clips. Flag complete story arcs that span multiple source intervals and identify the material to keep and cut.
 
+Ask the user to choose whenever there is more than one viable way to plan, script, or render a clip. Recommend an option and wait before implementing the unresolved choice. Record reusable editing preferences in the repository skill.
+
 Use synthetic media for regression checks. Keep recordings, transcripts, local models, and exports out of Git.
 
 ## Git workflow

@@ -9,9 +9,15 @@ Run `./scripts/calypso.py` from the repository root. Use the [README](../../../R
 
 For a guided run, give one actionable step at a time and explain how to verify the result. Provide commands using the user's actual paths when they want to run the steps themselves. Carry out authorized CLI steps when they ask Codex to run them. Resume from the latest verified artifact for that source.
 
+## Confirm choices before implementing
+
+When more than one viable approach exists for a step, ask the user to choose before committing to that approach in an edit plan, script, CLI command, or export. Give the options, recommend one, and explain the practical tradeoff. The recommended default is the first option to present. Use choices the user has already confirmed for the clip, and pause only the work that depends on an open choice. Continue inspecting the source or gathering evidence while waiting. If the source or a tool constraint leaves only one viable path, explain the constraint before proceeding.
+
+Apply this to transcription and context methods, story structure and cuts, audio and transitions, how speaker turns are identified or handled when unclear, diagram placement and timing, and whether to reuse the Calypso CLI or write a custom edit script. Verify cut points and crop bounds from the source. Ask about any missing input or unresolved decision that would otherwise require an assumption.
+
 ## Find the recording and transcribe
 
-Use the supplied source path, or ask for it if the recording is unclear. Probe the available audio streams and choose the dialogue track. Prefer the local Whisper large-v3-turbo and Silero workflow in [Yogurt-inspired context](references/yogurt-context.md) when the models are available. The standard `transcribe` command works with a configured Whisper model or `--model models/ggml-base.bin` when that file exists. Reuse a verified transcript for the same source when its quality is sufficient. Confirm the JSON contains usable dialogue and source-relative timestamps.
+Use the supplied source path, or ask for it if the recording is unclear. Probe the available audio streams and choose the dialogue track. Recommend the local Whisper large-v3-turbo and Silero workflow in [Yogurt-inspired context](references/yogurt-context.md) when the models are available. The standard `transcribe` command works with a configured Whisper model or `--model models/ggml-base.bin` when that file exists. Reuse a verified transcript for the same source when its quality is sufficient. Confirm the JSON contains usable dialogue and source-relative timestamps.
 
 If Whisper's Metal backend or Excalidraw's Chrome launch fails in the Codex sandbox, retry with appropriate access or provide the command for the user's regular terminal. Use a fresh work directory if the failed transcription already created one.
 
@@ -37,14 +43,15 @@ When the recordings arrive, match each take to its cue, remove excess silence, l
 
 ## Prepare framing and diagrams
 
-- **Full shot** uses `original`.
-- **Speaker only** uses `speaker` with `--framing`.
-- **Diagram only** uses `diagram` with `--diagram` and keeps the source audio.
-- **Both** uses `combined` with `--diagram`. Add `--framing` for speaker crops or omit it to show the full shot above the diagram.
+For a vertical clip with a diagram, recommend the approved layout first: crop to the active speaker, place that crop in the upper part of the frame, and reserve the lower part for a large diagram. Show the left host while they speak and switch to the right host when they take a turn. Determine left and right from this recording's frames and dialogue. Offer diagram below or above the host when either arrangement is viable and confirm the placement. Ask what should fill the diagram area when the diagram is offscreen if the clip does not use a diagram throughout.
 
-For a fixed two-shot, inspect full-resolution source frames and assign a crop to each seat. Build sorted, nonoverlapping speaker turns in source-relative seconds from isolated mics, manual review, or local [pyannote.audio Community-1](https://github.com/pyannote/pyannote-audio) after model setup. Confirm the seat for each speaker label, hold the crop through brief interjections as appropriate, and leave gaps for uncertain turns or shared reactions. For a moving camera, a detector such as [TalkNet](https://github.com/TaoRuijie/TalkNet-ASD) requires a separate integration and validation on the footage.
+- **Speaker above diagram** uses `render --layout combined --framing <turns.json> --diagram <diagram.png>` when a single interval and a static diagram fit. Check the text at phone size.
+- **Timed diagram or multi-part edit** can use a dedicated render script if the CLI cannot express the approved timing or layout. Keep the same speaker-above-diagram framing when approved. Record the chosen crop, layout, and diagram cues in the edit plan. Convert source-relative cue times to the edited timeline after accounting for cuts and cards.
+- **Other layouts** use `speaker` with `--framing` for a speaker-only crop, `original` for a full shot, or `diagram` with `--diagram` for diagram-only video with source audio. A full shot above a diagram is available through `combined` without `--framing`.
 
-For multi-step explanations, derive nodes and arrows from the selected excerpt or use the user's Excalidraw scene. Run `diagram` to produce a PNG and retain the editable scene. Preview labels at phone size.
+For a fixed two-shot, inspect full-resolution frames and frame each seat so the crop includes the host's face and shoulders. Build sorted, nonoverlapping speaker turns in source-relative seconds from an approved method, such as manual review, isolated mic tracks, or local [pyannote.audio Community-1](https://github.com/pyannote/pyannote-audio) after model setup. Confirm the seat for each speaker label. Ask how to handle uncertain turns, overlap, and brief interjections when those choices matter. Offer the full shot for uncertain turns when feasible. A moving-camera detector such as [TalkNet](https://github.com/TaoRuijie/TalkNet-ASD) requires separate integration and validation on the footage.
+
+For multi-step explanations, derive nodes and arrows from the selected excerpt or use the user's Excalidraw scene. Run `diagram` to produce a PNG and retain the editable scene. Preview the speaker change and diagram cue together at phone size.
 
 ## Verify exports
 
